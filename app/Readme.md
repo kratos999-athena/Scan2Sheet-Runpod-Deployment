@@ -1,0 +1,1 @@
+This is the deployment of all the heavy models on runpod and then will use hugging face spaces

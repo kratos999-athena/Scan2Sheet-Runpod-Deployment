@@ -1,0 +1,30 @@
+
+FROM paddlepaddle/paddle:3.1.0-gpu-cuda12.6-cudnn9.5
+
+ENV DEBIAN_FRONTEND=noninteractive
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    poppler-utils \
+    tesseract-ocr \
+    tesseract-ocr-eng \
+    libgl1 \
+    libglib2.0-0 \
+    libsm6 \
+    libxrender1 \
+    libxext6 \
+    wget \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -r requirements.txt
+
+RUN wget -O /app/EDSR_x4.pb https://github.com/Saafke/EDSR_TensorFlow/raw/master/models/EDSR_x4.pb
+
+COPY . .
+
+EXPOSE 8080
+
+CMD ["streamlit", "run", "app/main.py", "--server.port=8080", "--server.address=0.0.0.0"]
